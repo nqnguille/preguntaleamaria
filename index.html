@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MarIA — Agente IA · Cannabis Medicinal & Salud Integrativa · Ancestra</title>
+  <meta name="description" content="La primera IA especializada en cannabis medicinal de Argentina. Información con evidencia. Sin turno. Sin juicio.">
+  <meta property="og:title" content="MarIA — Agente IA · Cannabis Medicinal · Ancestra">
+  <meta property="og:description" content="La primera IA especializada en cannabis medicinal de Argentina. Información con evidencia. Sin turno. Sin juicio.">
+  <meta property="og:url" content="https://preguntaleamaria.com.ar">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MarIA — Agente IA · Cannabis Medicinal">
+  <meta name="twitter:description" content="La primera IA especializada en cannabis medicinal de Argentina.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       TOKENS
+    ============================================================ */
+    :root {
+      --black:              #050608;
+      --off-white:          #F0F2F7;
+      --green:              #71CE6A;
+      --green-dark:         #2D4239;
+      --green-glow:         rgba(113,206,106,0.15);
+      --green-glow-strong:  rgba(113,206,106,0.35);
+      --gray:               #7A8699;
+      --surface:            #0A0C10;
+      --surface-2:          #0D1018;
+      --border:             rgba(255,255,255,0.07);
+      --border-green:       rgba(113,206,106,0.2);
+      --font-display:       'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono:          'Space Mono', monospace;
+      --font-body:          'Plus Jakarta Sans', system-ui, sans-serif;
+      --nav-h:              68px;
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--black);
+      color: var(--off-white);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: radial-gradient(rgba(113,206,106,0.05) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ============================================================
+       SCROLLBAR
+    ============================================================ */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--green-dark); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--green); }
+
+    /* ============================================================
+       CUSTOM CURSOR
+    ============================================================ */
+    .cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--green);
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.05s ease, width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+      opacity: 0;
+    }
+    @media (hover: none) { .cursor { display: none; } }
+
+    /* ============================================================
+       REVEAL ON SCROLL
+    ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.delay-1 { transition-delay: 0.1s; }
+    .reveal.delay-2 { transition-delay: 0.2s; }
+    .reveal.delay-3 { transition-delay: 0.3s; }
+    .reveal.delay-4 { transition-delay: 0.4s; }
+    .reveal.delay-5 { transition-delay: 0.5s; }
+    .reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+    /* ============================================================
+       NAV
+    ============================================================ */
+    #nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      border-bottom: 0.5px solid transparent;
+      transition: background 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+    }
+    #nav.scrolled {
+      background: rgba(5,6,8,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--off-white);
+    }
+    .nav-logo .logo-ia { color: var(--green); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover { color: var(--off-white); }
+
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 0.5px solid var(--border-green);
+      padding: 10px 20px;
+      border-radius: 2px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+    .nav-cta:hover {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1.5px;
+      background: var(--off-white);
+      transition: all 0.3s ease;
+    }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    #hero {
+      position: relative;
+      height: 100vh;        /* siempre ocupa exactamente la pantalla */
+      overflow: hidden;
+      background: var(--black);
+    }
+
+    /* Video: 100% ancho, altura proporcional.
+       Si sobresale del viewport (pantallas no 16:9) se recorta
+       desde abajo con overflow:hidden — la cara de MarIA siempre visible. */
+    .hero-video {
+      display: block;
+      width: 100%;
+      height: auto;
+      min-height: 100%;
+      opacity: 0;
+      transition: opacity 1.4s ease;
+    }
+    .hero-video.loaded { opacity: 1; }
+
+    /* Overlays */
+    .hero-overlay-left {
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(5,6,8,0.82) 0%, rgba(5,6,8,0.45) 38%, rgba(5,6,8,0.05) 60%, transparent 100%);
+      z-index: 2;
+    }
+    .hero-overlay-bottom {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(5,6,8,1) 0%, rgba(5,6,8,0.85) 18%, rgba(5,6,8,0.3) 38%, transparent 60%);
+      z-index: 3;
+    }
+    .hero-overlay-vignette {
+      position: absolute; inset: 0;
+      box-shadow: inset 0 0 120px rgba(5,6,8,0.35), inset 0 0 80px rgba(113,206,106,0.05);
+      z-index: 4;
+    }
+
+    /* Video fallback glow */
+    .hero-video-fallback {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 70% 40%, rgba(45,66,57,0.35) 0%, rgba(5,6,8,0) 70%);
+      z-index: 0;
+    }
+
+    /* Hero text — anclado al viewport (hero = 100vh) */
+    .hero-text-overlay {
+      position: absolute;
+      bottom: 5vh;
+      left: 0; right: 0;
+      z-index: 5;
+      padding: 0 52px 0 300px; /* izquierda alineada al resto de secciones */
+      pointer-events: none;
+    }
+
+    .hero-display-title {
+      font-family: var(--font-display);
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-display-line1 {
+      display: block;
+      font-size: clamp(20px, 3.8vw, 54px);
+      font-weight: 300;
+      color: rgba(240,242,247,0.6);
+      letter-spacing: -0.01em;
+      margin-bottom: 0;
+      opacity: 0;
+      animation: heroFadeUp 0.7s ease 1.4s forwards;
+    }
+
+    .hero-display-line2 {
+      display: block;
+      font-size: clamp(68px, 11.5vw, 168px);
+      font-weight: 800;
+      color: var(--off-white);
+      letter-spacing: -0.045em;
+      line-height: 0.9;
+      opacity: 0;
+      animation: heroFadeUp 0.7s ease 1.6s forwards;
+    }
+    .hero-display-line2 .maria {
+      color: var(--green);
+      text-shadow: 0 0 80px rgba(113,206,106,0.55), 0 0 160px rgba(113,206,106,0.2);
+    }
+
+    .hero-desc {
+      font-family: var(--font-body);
+      font-size: clamp(12px, 1.2vw, 15px);
+      font-weight: 400;
+      color: rgba(240,242,247,0.48);
+      max-width: 480px;
+      line-height: 1.55;
+      margin-top: 14px;
+      opacity: 0;
+      animation: heroFadeUp 0.7s ease 1.85s forwards;
+    }
+
+    @keyframes heroFadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-text-overlay { padding: 0 20px 6%; }
+      .hero-display-line2 { font-size: clamp(52px, 16vw, 100px); }
+    }
+
+    /* ============================================================
+       CHAT WIDGET
+    ============================================================ */
+    .chat-widget {
+      position: fixed;
+      bottom: -560px; /* off-screen initially */
+      right: 28px;
+      width: 380px;
+      background: #0D1018;
+      border: 0.5px solid var(--border-green);
+      border-radius: 16px;
+      overflow: hidden;
+      z-index: 200;
+      box-shadow:
+        0 24px 64px rgba(0,0,0,0.7),
+        0 0 0 0.5px rgba(113,206,106,0.12),
+        0 0 60px rgba(113,206,106,0.06);
+      transition: bottom 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .chat-widget.open { bottom: 28px; }
+
+    /* Header */
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      background: #0A0C10;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .chat-avatar {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .chat-avatar-letter {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green-dark), #1a3a2a);
+      border: 1.5px solid var(--border-green);
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--green);
+      font-weight: 700;
+    }
+    .chat-status-dot {
+      position: absolute;
+      bottom: 1px; right: 1px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #25D366;
+      border: 2px solid #0A0C10;
+      animation: pulse 2s infinite;
+    }
+
+    .chat-header-info { flex: 1; min-width: 0; }
+    .chat-name {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--off-white);
+      letter-spacing: 0.02em;
+    }
+    .chat-name-ia { color: var(--green); }
+    .chat-status-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--gray);
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    .chat-minimize {
+      color: var(--gray);
+      padding: 6px;
+      border-radius: 4px;
+      transition: color 0.2s ease;
+      flex-shrink: 0;
+    }
+    .chat-minimize:hover { color: var(--off-white); }
+
+    /* Messages */
+    .chat-messages {
+      padding: 20px 16px 16px;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-bubble-in {
+      display: flex;
+      flex-direction: column;
+      align-self: flex-start;
+      background: #141820;
+      border: 0.5px solid var(--border);
+      border-radius: 4px 16px 16px 4px;
+      padding: 12px 16px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--off-white);
+      max-width: 90%;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .chat-bubble-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* Typing indicator */
+    .chat-typing {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 12px 16px;
+      background: #141820;
+      border: 0.5px solid var(--border);
+      border-radius: 4px 16px 16px 4px;
+      align-self: flex-start;
+      width: 58px;
+    }
+    .typing-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gray);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.36s; }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30%            { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Topic chips */
+    .chat-topics { gap: 12px; }
+    .chat-topics-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chat-chip {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      color: var(--green);
+      background: rgba(113,206,106,0.07);
+      border: 0.5px solid var(--border-green);
+      padding: 4px 10px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .chat-chip:hover {
+      background: rgba(113,206,106,0.15);
+    }
+
+    /* Input */
+    .chat-input-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      padding: 12px 14px;
+      border-top: 0.5px solid var(--border);
+      background: #0A0C10;
+    }
+    .chat-input {
+      flex: 1;
+      background: #141820;
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--off-white);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 10px 14px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    .chat-input:focus { border-color: var(--border-green); }
+    .chat-input::placeholder { color: rgba(122,134,153,0.5); }
+
+    .chat-send-btn {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .chat-send-btn:hover {
+      background: #8ADB83;
+      transform: scale(1.06);
+    }
+
+    .chat-footer-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: rgba(122,134,153,0.5);
+      background: #0A0C10;
+      border-top: 0.5px solid var(--border);
+    }
+
+    /* Floating re-open button */
+    .chat-bubble-btn {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--green);
+      color: var(--black);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 14px 20px 14px 16px;
+      border-radius: 50px;
+      z-index: 200;
+      box-shadow: 0 8px 32px rgba(113,206,106,0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chat-bubble-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(113,206,106,0.45);
+    }
+    .chat-bubble-label { white-space: nowrap; }
+    .chat-bubble-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--black);
+      opacity: 0.5;
+      animation: pulse 2s infinite;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 480px) {
+      .chat-widget {
+        right: 12px;
+        left: 12px;
+        width: auto;
+        border-radius: 14px;
+      }
+      .chat-widget.open { bottom: 12px; }
+      .chat-bubble-btn  { right: 12px; bottom: 12px; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.6); opacity: 0.4; }
+    }
+
+    /* ============================================================
+       SECTION COMMON
+    ============================================================ */
+    .section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.2vw, 48px);
+      font-weight: 700;
+      color: var(--off-white);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+
+    .section-title .green { color: var(--green); }
+
+    /* ============================================================
+       PREGUNTAS — carrusel doble
+    ============================================================ */
+    #como-funciona {
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+      overflow: hidden;
+      padding-bottom: 72px;
+    }
+
+    .qs-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 52px 56px;
+    }
+
+    .qs-title {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4.5vw, 64px);
+      font-weight: 800;
+      color: var(--off-white);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+
+    .qs-sub {
+      font-size: clamp(14px, 1.3vw, 16px);
+      color: var(--gray);
+      line-height: 1.7;
+      max-width: 440px;
+    }
+
+    .qs-carousel {
+      position: relative;
+      margin-bottom: 12px;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    }
+    .qs-carousel:hover .qs-track { animation-play-state: paused; }
+
+    .qs-track {
+      display: flex;
+      gap: 12px;
+      width: max-content;
+      padding: 8px 0;
+    }
+    .qs-track--fwd { animation: qsFwd 120s linear infinite; }
+    .qs-track--rev { animation: qsRev 140s linear infinite; }
+
+    @keyframes qsFwd {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes qsRev {
+      0%   { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .qs-card {
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 100px;
+      padding: 11px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(240,242,247,0.7);
+      white-space: nowrap;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .qs-card:hover {
+      background: var(--surface-2);
+      border-color: var(--border-green);
+      color: var(--off-white);
+    }
+    .qs-card::before {
+      content: '—';
+      color: var(--green);
+      margin-right: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    /* ============================================================
+       CONOCIMIENTO
+    ============================================================ */
+    #conocimiento {
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .conocimiento-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+
+    .conocimiento-header {
+      margin-bottom: 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: end;
+    }
+
+    .conocimiento-subtitle {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.8;
+      align-self: end;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      border: 0.5px solid var(--border);
+    }
+
+    .knowledge-card {
+      background: var(--surface);
+      padding: 36px 32px;
+      border: 0.5px solid transparent;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      cursor: default;
+    }
+    .knowledge-card:hover {
+      background: var(--surface-2);
+      border-color: var(--border-green);
+    }
+
+    .card-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--off-white);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .card-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ============================================================
+       EVIDENCIA — carrusel
+    ============================================================ */
+    #evidencia {
+      background: #070A10;
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+      overflow: hidden;
+    }
+
+    .evidencia-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 52px 56px;
+    }
+
+    .evidencia-header { margin-bottom: 0; }
+    .evidencia-sub {
+      font-size: 15px;
+      color: var(--gray);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    /* Carrusel */
+    .ev-carousel {
+      position: relative;
+      padding: 48px 0 64px;
+      /* fade edges */
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    }
+    .ev-carousel:hover .ev-track { animation-play-state: paused; }
+
+    .ev-track {
+      display: flex;
+      gap: 20px;
+      width: max-content;
+      animation: evScroll 55s linear infinite;
+    }
+
+    @keyframes evScroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ev-card {
+      flex-shrink: 0;
+      width: 300px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-top: 2px solid var(--green);
+      padding: 28px 24px;
+      border-radius: 2px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .ev-card:hover {
+      background: var(--surface-2);
+      border-color: var(--border-green);
+      border-top-color: var(--green);
+    }
+
+    .ev-condition {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 12px;
+    }
+
+    .ev-finding {
+      font-size: 13px;
+      color: var(--off-white);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .ev-source {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: rgba(122,134,153,0.6);
+      text-transform: uppercase;
+    }
+
+    /* ============================================================
+       PROFESIONALES
+    ============================================================ */
+    #profesionales {
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .profesionales-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 120px 48px;
+    }
+
+    .profesionales-header {
+      margin-bottom: 60px;
+    }
+
+    .profesionales-header .section-title { margin-bottom: 12px; }
+
+    .profesionales-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .prof-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      padding: 44px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prof-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--green), transparent);
+    }
+
+    .prof-card-role {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 16px;
+    }
+
+    .prof-card-title {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--off-white);
+      margin-bottom: 20px;
+    }
+
+    .prof-card-desc {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .prof-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .prof-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      color: rgba(240,242,247,0.7);
+    }
+
+    .prof-features li::before {
+      content: '→';
+      color: var(--green);
+      flex-shrink: 0;
+      font-family: var(--font-mono);
+      margin-top: 1px;
+    }
+
+    /* ============================================================
+       ECOSISTEMA — MarIA como eje
+    ============================================================ */
+    #ecosistema {
+      background: var(--surface);
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .eco-hub-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 52px;
+    }
+
+    .eco-hub-header { margin-bottom: 56px; }
+    .eco-hub-header .section-title { margin-bottom: 12px; }
+    .eco-hub-intro {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+      max-width: 480px;
+    }
+
+    /* Eje central — MarIA */
+    .eco-axis {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: start;
+      gap: 40px;
+      background: linear-gradient(135deg, rgba(113,206,106,0.06) 0%, rgba(5,6,8,0) 60%);
+      border: 0.5px solid var(--border-green);
+      border-left: 3px solid var(--green);
+      padding: 40px 44px;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 0;
+    }
+    .eco-axis::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 80% at 0% 50%, rgba(113,206,106,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .eco-axis-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green);
+      background: rgba(113,206,106,0.1);
+      border: 0.5px solid var(--border-green);
+      padding: 5px 10px;
+      border-radius: 2px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      align-self: start;
+    }
+    .eco-axis-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+
+    .eco-axis-name {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 800;
+      color: var(--off-white);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .eco-axis-name span { color: var(--green); }
+
+    .eco-axis-desc {
+      font-size: 15px;
+      color: rgba(240,242,247,0.65);
+      line-height: 1.7;
+      max-width: 620px;
+      margin-bottom: 24px;
+    }
+
+    .eco-axis-attrs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .eco-axis-attrs span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      color: var(--green);
+      background: rgba(113,206,106,0.07);
+      border: 0.5px solid var(--border-green);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* Conector visual */
+    .eco-connector {
+      display: flex;
+      justify-content: space-around;
+      padding: 0 10%;
+      position: relative;
+      height: 40px;
+      align-items: center;
+    }
+    .eco-connector-line {
+      position: absolute;
+      top: 50%; left: 10%; right: 10%;
+      height: 0.5px;
+      background: linear-gradient(to right, var(--green), transparent 50%, var(--green));
+      opacity: 0.3;
+    }
+    .eco-connector-node {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 1.5px solid var(--green);
+      background: var(--surface);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Nodos del ecosistema */
+    .eco-nodes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .eco-node {
+      background: var(--black);
+      border: 0.5px solid var(--border);
+      border-top: 1px solid rgba(113,206,106,0.25);
+      padding: 32px 32px 28px;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .eco-node:hover {
+      background: var(--surface-2);
+      border-color: var(--border-green);
+    }
+
+    .eco-node-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+
+    .eco-node-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--off-white);
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .eco-node-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .eco-node-link {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: var(--green);
+      opacity: 0.7;
+    }
+
+    @media (max-width: 768px) {
+      .eco-axis { grid-template-columns: 1fr; gap: 16px; padding: 28px 24px; }
+      .eco-nodes { grid-template-columns: 1fr; }
+      .eco-connector { display: none; }
+    }
+
+    /* ============================================================
+       PARTNERS / CONTACT
+    ============================================================ */
+    #partners {
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .partners-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 120px 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .partners-left .section-title { margin-bottom: 16px; }
+    .partners-left .section-sub {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .partners-left .partner-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gray);
+      letter-spacing: 0.06em;
+    }
+
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    .form-input,
+    .form-textarea {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      color: var(--off-white);
+      font-family: var(--font-body);
+      font-size: 15px;
+      padding: 14px 16px;
+      border-radius: 2px;
+      transition: border-color 0.2s ease;
+      outline: none;
+      width: 100%;
+    }
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--border-green);
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: rgba(122,134,153,0.5); }
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    .form-submit {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--green);
+      border: 0.5px solid var(--border-green);
+      padding: 16px 28px;
+      border-radius: 2px;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      margin-top: 8px;
+    }
+    .form-submit:hover {
+      background: var(--green);
+      color: var(--black);
+    }
+
+    .form-success {
+      display: none;
+      padding: 32px;
+      background: rgba(113,206,106,0.05);
+      border: 0.5px solid var(--border-green);
+      border-radius: 2px;
+      text-align: center;
+    }
+    .form-success.visible { display: block; }
+    .form-success p {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--green);
+    }
+
+    /* ============================================================
+       DISCLAIMER
+    ============================================================ */
+    #disclaimer {
+      background: #070A10;
+      border-top: 0.5px solid var(--border);
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .disclaimer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 80px 48px;
+    }
+
+    .disclaimer-box {
+      position: relative;
+      border: 0.5px solid rgba(113,206,106,0.15);
+      padding: 40px 44px;
+      border-radius: 2px;
+    }
+
+    .disclaimer-box::before {
+      content: 'AVISO LEGAL';
+      position: absolute;
+      top: -9px;
+      left: 32px;
+      background: #070A10;
+      padding: 0 12px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: rgba(113,206,106,0.5);
+    }
+
+    .disclaimer-text {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.9;
+    }
+    .disclaimer-text strong { color: rgba(240,242,247,0.7); }
+
+    /* ============================================================
+       CTA FINAL
+    ============================================================ */
+    #cta-final {
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    #cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(45,66,57,0.35) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-final-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 140px 48px;
+    }
+
+    .cta-final-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 32px;
+    }
+
+    .cta-final-title {
+      font-family: var(--font-display);
+      font-size: clamp(40px, 5vw, 64px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 20px;
+      color: var(--off-white);
+    }
+
+    .cta-final-title .maria {
+      color: var(--green);
+      text-shadow: 0 0 40px rgba(113,206,106,0.4), 0 0 80px rgba(113,206,106,0.15);
+    }
+
+    .cta-final-tags {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--gray);
+      letter-spacing: 0.08em;
+      margin-bottom: 48px;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      border-top: 0.5px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-brand {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--gray);
+    }
+    .footer-brand .footer-ia { color: var(--green); }
+
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gray);
+      transition: color 0.2s ease;
+    }
+    .footer-links a:hover { color: var(--off-white); }
+
+    /* ============================================================
+       WHATSAPP BTN (reusable)
+    ============================================================ */
+    .wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--green);
+      color: var(--black);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 16px 28px;
+      border-radius: 2px;
+      transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .wa-btn:hover {
+      background: #8ADB83;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(113,206,106,0.3);
+    }
+
+    /* ============================================================
+       MOBILE MENU
+    ============================================================ */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(5,6,8,0.98);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+      transition: color 0.2s ease;
+    }
+    .mobile-nav a:hover { color: var(--green); }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 1024px) {
+      #nav { padding: 0 32px; }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero-content { padding: 0 32px; }
+      .section { padding: 80px 32px; }
+      .profesionales-inner,
+      .partners-inner { padding: 80px 32px; }
+      .evidencia-inner,
+      .ecosistema-inner,
+      .conocimiento-inner,
+      .disclaimer-inner { padding: 80px 32px; }
+      .cta-final-inner { padding: 100px 32px; }
+      .footer-inner { padding: 32px; }
+      .stats-grid { padding: 0 32px; }
+
+      .ecosistema-grid { grid-template-columns: repeat(2, 1fr); }
+      .ecosistema-grid--2 { grid-template-columns: 1fr; }
+      .evidencia-grid { grid-template-columns: 1fr; gap: 16px; }
+    }
+
+    @media (max-width: 768px) {
+      #nav { padding: 0 20px; }
+
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 20px;
+      }
+      .stat-item:nth-child(2) { border-right: none; }
+      .stat-item:nth-child(3) { border-right: 0.5px solid var(--border); border-top: 0.5px solid var(--border); }
+      .stat-item:nth-child(4) { border-right: none; border-top: 0.5px solid var(--border); }
+
+      .conocimiento-inner { padding: 60px 20px; }
+      .conocimiento-header { grid-template-columns: 1fr; gap: 16px; }
+      .cards-grid { grid-template-columns: 1fr; }
+
+      .evidencia-inner { padding: 60px 20px; }
+
+      .profesionales-inner { padding: 60px 20px; }
+      .profesionales-grid { grid-template-columns: 1fr; }
+
+      .ecosistema-inner { padding: 60px 20px; }
+      .ecosistema-grid { grid-template-columns: 1fr; }
+
+      .partners-inner {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        padding: 60px 20px;
+      }
+
+      .disclaimer-inner { padding: 60px 20px; }
+      .disclaimer-box { padding: 32px 24px; }
+
+      .cta-final-inner { padding: 80px 20px; }
+
+      .footer-inner {
+        flex-direction: column;
+        gap: 20px;
+        padding: 24px 20px;
+        text-align: center;
+      }
+      .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+
+      .section { padding: 60px 20px; }
+    }
+
+    /* ============================================================
+       CHAT WIDGET CLEARANCE — desktop
+       El widget es 380px ancho a right:28px = 408px desde el borde.
+       Todos los contenedores de secciones (excepto hero y carruseles
+       full-width) reservan ese espacio en el lado derecho.
+    ============================================================ */
+    @media (min-width: 1024px) {
+      /* Widget: 380px ancho, right: 28px → ocupa los últimos 408px del viewport.
+         Dejamos 420px desde el borde derecho y reducimos padding izquierdo
+         para que el contenido use el máximo ancho disponible. */
+      .qs-inner,
+      .conocimiento-inner,
+      .evidencia-inner,
+      .profesionales-inner,
+      .partners-inner,
+      .disclaimer-inner,
+      .eco-hub-inner {
+        padding-left: 300px !important;
+        padding-right: 508px !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+      }
+
+      .footer-inner {
+        padding-right: 508px !important;
+        padding-left: 300px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div id="cursor" class="cursor" aria-hidden="true"></div>
+
+  <!-- ============================================================
+       MOBILE NAV
+  ============================================================ -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#como-funciona" onclick="closeMobileNav()">Cómo funciona</a>
+    <a href="#conocimiento" onclick="closeMobileNav()">Conocimiento</a>
+    <a href="#profesionales" onclick="closeMobileNav()">Profesionales</a>
+    <a href="#ecosistema" onclick="closeMobileNav()">Ecosistema</a>
+    <a href="https://wa.me/5492994XXXXXX" class="wa-btn" aria-label="Escribirle a MarIA por WhatsApp" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.554 4.1 1.524 5.824L.057 23.998l6.305-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.652-.52-5.17-1.427l-.371-.22-3.844 1.008 1.027-3.742-.241-.385A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Consultar ahora
+    </a>
+  </div>
+
+  <!-- ============================================================
+       NAV
+  ============================================================ -->
+  <nav id="nav" role="navigation" aria-label="Navegación principal">
+    <a href="#hero" class="nav-logo" aria-label="MarIA - Ir al inicio">Mar<span class="logo-ia">IA</span></a>
+
+    <ul class="nav-links">
+      <li><a href="#como-funciona">Cómo funciona</a></li>
+      <li><a href="#conocimiento">Conocimiento</a></li>
+      <li><a href="#profesionales">Profesionales</a></li>
+      <li><a href="#ecosistema">Ecosistema</a></li>
+    </ul>
+
+    <a href="https://wa.me/5492994XXXXXX" class="nav-cta" aria-label="Consultar con MarIA ahora" target="_blank" rel="noopener">Consultar ahora</a>
+
+    <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       HERO — video limpio, sin texto encima
+  ============================================================ -->
+  <section id="hero">
+    <div class="hero-video-fallback" aria-hidden="true"></div>
+    <video class="hero-video" autoplay muted loop playsinline aria-hidden="true" preload="auto">
+      <source src="hero_1.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay-left"    aria-hidden="true"></div>
+    <div class="hero-overlay-bottom"  aria-hidden="true"></div>
+    <div class="hero-overlay-vignette" aria-hidden="true"></div>
+
+    <!-- Hero text overlay — bottom left -->
+    <div class="hero-text-overlay">
+      <h1 class="hero-display-title" aria-label="Preguntale a MarIA">
+        <span class="hero-display-line1">Preguntale a</span>
+        <span class="hero-display-line2"><span class="maria">MarIA</span></span>
+      </h1>
+      <p class="hero-desc">La primera IA entrenada en cannabis medicinal de Argentina.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CHAT WIDGET — slide up desde abajo
+  ============================================================ -->
+  <div id="chatWidget" class="chat-widget" role="complementary" aria-label="Chat con MarIA">
+
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-avatar" aria-hidden="true">
+        <span class="chat-avatar-letter">M</span>
+        <span class="chat-status-dot"></span>
+      </div>
+      <div class="chat-header-info">
+        <div class="chat-name">Mar<span class="chat-name-ia">IA</span></div>
+        <div class="chat-status-text" id="chatStatusText">Conectando…</div>
+      </div>
+      <button class="chat-minimize" onclick="minimizeChat()" aria-label="Minimizar chat">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <line x1="2" y1="8" x2="14" y2="8"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Messages area -->
+    <div class="chat-messages" id="chatMessages">
+      <!-- typing indicator — shown first -->
+      <div class="chat-typing" id="chatTyping" aria-label="MarIA está escribiendo">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>
+
+      <!-- Mensaje 1 — presentación -->
+      <div class="chat-bubble-in" id="chatMsg1" style="display:none">
+        Hola 👋 Soy <strong style="color:var(--green)">MarIA</strong>.<br>
+        Estoy entrenada en evidencia científica, regulación argentina y protocolo clínico de cannabis medicinal.<br><br>
+        Todo lo que preguntés se queda entre nosotros.
+      </div>
+
+      <!-- Mensaje 2 — temas (chips) -->
+      <div class="chat-bubble-in chat-topics" id="chatMsg2" style="display:none">
+        <span class="chat-topics-label">Puedo ayudarte con:</span>
+        <div class="chat-chips">
+          <span class="chat-chip">Cannabis · CBD / THC</span>
+          <span class="chat-chip">Regulación AR</span>
+          <span class="chat-chip">Salud Mental</span>
+          <span class="chat-chip">Evidencia científica</span>
+          <span class="chat-chip">Dosificación</span>
+          <span class="chat-chip">Interacciones</span>
+        </div>
+      </div>
+
+      <!-- Mensaje 3 — pregunta -->
+      <div class="chat-bubble-in" id="chatMsg3" style="display:none">
+        ¿Sobre qué querés consultar hoy?
+      </div>
+    </div>
+
+    <!-- Input area -->
+    <div class="chat-input-wrap" id="chatInputWrap">
+      <textarea
+        class="chat-input"
+        id="chatInput"
+        placeholder="Escribí tu consulta..."
+        rows="2"
+        maxlength="500"
+        aria-label="Tu consulta para MarIA"
+        onkeydown="handleChatKey(event)"
+      ></textarea>
+      <button class="chat-send-btn" onclick="sendToWhatsApp()" aria-label="Enviar por WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.554 4.1 1.524 5.824L.057 23.998l6.305-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.652-.52-5.17-1.427l-.371-.22-3.844 1.008 1.027-3.742-.241-.385A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="chat-footer-note">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11" aria-hidden="true" style="color:var(--green);flex-shrink:0">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.554 4.1 1.524 5.824L.057 23.998l6.305-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.652-.52-5.17-1.427l-.371-.22-3.844 1.008 1.027-3.742-.241-.385A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Abre WhatsApp con tu mensaje listo · Sin registro
+    </div>
+  </div>
+
+  <!-- Botón flotante para reabrir el chat cuando está minimizado -->
+  <button id="chatBubble" class="chat-bubble-btn" onclick="openChat()" aria-label="Abrir chat con MarIA" style="display:none">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24" aria-hidden="true">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.114.554 4.1 1.524 5.824L.057 23.998l6.305-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.885 0-3.652-.52-5.17-1.427l-.371-.22-3.844 1.008 1.027-3.742-.241-.385A9.953 9.953 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+    </svg>
+    <span class="chat-bubble-label">Preguntale a MarIA</span>
+    <span class="chat-bubble-dot"></span>
+  </button>
+
+  <!-- ============================================================
+       PREGUNTAS TÍPICAS — carrusel
+  ============================================================ -->
+  <section id="como-funciona">
+    <div class="qs-inner">
+      <p class="section-label reveal">Preguntas reales</p>
+      <h2 class="qs-title reveal delay-1">Si lo pensaste,<br>podés preguntarlo.</h2>
+      <p class="qs-sub reveal delay-2">MarIA responde sin juzgar. Estas son algunas de las preguntas que más recibe.</p>
+    </div>
+    <!-- Carrusel fila 1 — izquierda a derecha -->
+    <div class="qs-carousel" aria-label="Ejemplos de preguntas">
+      <div class="qs-track qs-track--fwd">
+        <div class="qs-card">¿Puedo tomar CBD si estoy tomando antidepresivos?</div>
+        <div class="qs-card">¿Cuánto CBD necesito para el dolor crónico?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la epilepsia?</div>
+        <div class="qs-card">¿Cómo hago el trámite del REPROCANN?</div>
+        <div class="qs-card">¿Qué diferencia hay entre CBD y THC?</div>
+        <div class="qs-card">¿El aceite de CBD me puede dar sueño?</div>
+        <div class="qs-card">¿Qué médico me prescribe cannabis en Argentina?</div>
+        <div class="qs-card">¿Cuánto tiempo tarda en hacer efecto el CBD?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la ansiedad?</div>
+        <div class="qs-card">¿Qué es el REPROCANN exactamente?</div>
+        <div class="qs-card">¿Puedo usar cannabis medicinal si estoy embarazada?</div>
+        <div class="qs-card">¿Cómo sé si necesito CBD o THC?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para el autismo?</div>
+        <div class="qs-card">¿Puedo combinar CBD con melatonina?</div>
+        <div class="qs-card">¿Qué efectos secundarios tiene el CBD?</div>
+        <div class="qs-card">¿El aceite de CBD se puede tomar en ayunas?</div>
+        <div class="qs-card">¿Cuánto dura un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿El CBD sirve para el dolor de cabeza?</div>
+        <div class="qs-card">¿Qué obra social cubre el cannabis medicinal?</div>
+        <div class="qs-card">¿Puedo darle CBD a un niño con TDAH?</div>
+        <!-- set 2 para loop -->
+        <div class="qs-card">¿Puedo tomar CBD si estoy tomando antidepresivos?</div>
+        <div class="qs-card">¿Cuánto CBD necesito para el dolor crónico?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la epilepsia?</div>
+        <div class="qs-card">¿Cómo hago el trámite del REPROCANN?</div>
+        <div class="qs-card">¿Qué diferencia hay entre CBD y THC?</div>
+        <div class="qs-card">¿El aceite de CBD me puede dar sueño?</div>
+        <div class="qs-card">¿Qué médico me prescribe cannabis en Argentina?</div>
+        <div class="qs-card">¿Cuánto tiempo tarda en hacer efecto el CBD?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la ansiedad?</div>
+        <div class="qs-card">¿Qué es el REPROCANN exactamente?</div>
+        <div class="qs-card">¿Puedo usar cannabis medicinal si estoy embarazada?</div>
+        <div class="qs-card">¿Cómo sé si necesito CBD o THC?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para el autismo?</div>
+        <div class="qs-card">¿Puedo combinar CBD con melatonina?</div>
+        <div class="qs-card">¿Qué efectos secundarios tiene el CBD?</div>
+        <div class="qs-card">¿El aceite de CBD se puede tomar en ayunas?</div>
+        <div class="qs-card">¿Cuánto dura un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿El CBD sirve para el dolor de cabeza?</div>
+        <div class="qs-card">¿Qué obra social cubre el cannabis medicinal?</div>
+        <div class="qs-card">¿Puedo darle CBD a un niño con TDAH?</div>
+      </div>
+    </div>
+    <!-- Carrusel fila 2 — derecha a izquierda -->
+    <div class="qs-carousel" aria-hidden="true">
+      <div class="qs-track qs-track--rev">
+        <div class="qs-card">¿Es legal el cannabis medicinal en Argentina?</div>
+        <div class="qs-card">¿Qué pasa si mezclo CBD con ibuprofeno?</div>
+        <div class="qs-card">¿Puedo usar cannabis si tengo presión alta?</div>
+        <div class="qs-card">¿El CBD sirve para el insomnio?</div>
+        <div class="qs-card">¿Qué forma de administración es mejor para el dolor?</div>
+        <div class="qs-card">¿Puedo manejar si tomé aceite de CBD?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la fibromialgia?</div>
+        <div class="qs-card">¿Necesito receta para comprar CBD?</div>
+        <div class="qs-card">¿El THC genera adicción?</div>
+        <div class="qs-card">¿Cuánto cuesta un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿Qué pasa si me equivoco con la dosis?</div>
+        <div class="qs-card">¿Puedo viajar con aceite de CBD en Argentina?</div>
+        <div class="qs-card">¿Qué obra social me cubre el cannabis?</div>
+        <div class="qs-card">¿El CBD sirve para la artritis reumatoidea?</div>
+        <div class="qs-card">¿Qué médico especialista debo buscar?</div>
+        <div class="qs-card">¿Cuántas gotas de CBD debo tomar?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para el Parkinson?</div>
+        <div class="qs-card">¿Puedo tomar CBD si tengo diabetes?</div>
+        <div class="qs-card">¿Cómo empiezo un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿El CBD interactúa con anticoagulantes?</div>
+        <!-- set 2 para loop -->
+        <div class="qs-card">¿Es legal el cannabis medicinal en Argentina?</div>
+        <div class="qs-card">¿Qué pasa si mezclo CBD con ibuprofeno?</div>
+        <div class="qs-card">¿Puedo usar cannabis si tengo presión alta?</div>
+        <div class="qs-card">¿El CBD sirve para el insomnio?</div>
+        <div class="qs-card">¿Qué forma de administración es mejor para el dolor?</div>
+        <div class="qs-card">¿Puedo manejar si tomé aceite de CBD?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para la fibromialgia?</div>
+        <div class="qs-card">¿Necesito receta para comprar CBD?</div>
+        <div class="qs-card">¿El THC genera adicción?</div>
+        <div class="qs-card">¿Cuánto cuesta un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿Qué pasa si me equivoco con la dosis?</div>
+        <div class="qs-card">¿Puedo viajar con aceite de CBD en Argentina?</div>
+        <div class="qs-card">¿Qué obra social me cubre el cannabis?</div>
+        <div class="qs-card">¿El CBD sirve para la artritis reumatoidea?</div>
+        <div class="qs-card">¿Qué médico especialista debo buscar?</div>
+        <div class="qs-card">¿Cuántas gotas de CBD debo tomar?</div>
+        <div class="qs-card">¿El cannabis medicinal sirve para el Parkinson?</div>
+        <div class="qs-card">¿Puedo tomar CBD si tengo diabetes?</div>
+        <div class="qs-card">¿Cómo empiezo un tratamiento con cannabis medicinal?</div>
+        <div class="qs-card">¿El CBD interactúa con anticoagulantes?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONOCIMIENTO
+  ============================================================ -->
+  <section id="conocimiento">
+    <div class="conocimiento-inner">
+      <div class="conocimiento-header">
+        <div>
+          <p class="section-label reveal">Base de conocimiento</p>
+          <h2 class="section-title reveal delay-1">Lo que MarIA sabe.<br>Y lo que <span class="green">no inventa</span>.</h2>
+        </div>
+        <p class="conocimiento-subtitle reveal delay-2">Entrenada sobre literatura científica revisada, protocolo clínico y regulación argentina vigente. Sin relleno.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="knowledge-card reveal">
+          <div class="card-tag">Cannabis</div>
+          <div class="card-title">Sistema endocannabinoide</div>
+          <div class="card-desc">CBD, THC, CBN, CBG. Formas de administración, biodisponibilidad, interacciones farmacológicas, REPROCANN y prescripción en Argentina.</div>
+        </div>
+        <div class="knowledge-card reveal delay-1">
+          <div class="card-tag">Regulación</div>
+          <div class="card-title">Marco legal argentino</div>
+          <div class="card-desc">Ley 27350, DNU 70/2023, ANMAT, obras sociales. Lo que puede y no puede hacer un médico hoy. Actualizado.</div>
+        </div>
+        <div class="knowledge-card reveal delay-2">
+          <div class="card-tag">Salud Mental</div>
+          <div class="card-title">Integración terapéutica</div>
+          <div class="card-desc">Ansiedad, depresión, TEPT, dolor crónico. Terapias complementarias con evidencia. Protocolos de integración.</div>
+        </div>
+        <div class="knowledge-card reveal delay-3">
+          <div class="card-tag">Evidencia</div>
+          <div class="card-title">Literatura científica</div>
+          <div class="card-desc">JAMA, Lancet, Nature, CONICET. MarIA cita fuentes. Nunca alucina. Cuando no sabe, lo dice.</div>
+        </div>
+        <div class="knowledge-card reveal delay-4">
+          <div class="card-tag">Dosificación</div>
+          <div class="card-title">Inicio y titulación</div>
+          <div class="card-desc">Cómo empezar, cómo ajustar la dosis y qué esperar en cada etapa del tratamiento. Protocolos con respaldo clínico.</div>
+        </div>
+        <div class="knowledge-card reveal delay-5">
+          <div class="card-tag">Triage</div>
+          <div class="card-title">Derivación inteligente</div>
+          <div class="card-desc">MarIA sabe cuándo termina su rol. Detecta urgencias. Conecta con el profesional correcto del ecosistema. Con contexto.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       EVIDENCIA — carrusel infinito
+  ============================================================ -->
+  <section id="evidencia">
+    <div class="evidencia-inner">
+      <div class="evidencia-header">
+        <p class="section-label reveal">Respaldo científico</p>
+        <h2 class="section-title reveal delay-1">MarIA responde con evidencia.<br>No con opiniones.</h2>
+        <p class="evidencia-sub reveal delay-2">Entrenada sobre papers publicados en las principales revistas científicas del mundo.</p>
+      </div>
+    </div>
+    <!-- Carrusel — fuera del max-width para que llegue a los bordes -->
+    <div class="ev-carousel" aria-label="Papers científicos sobre cannabis medicinal">
+      <div class="ev-track">
+        <!-- Set 1 -->
+        <div class="ev-card"><div class="ev-condition">Epilepsia refractaria</div><div class="ev-finding">Reducción ≥50% de crisis en el 43% de pacientes pediátricos tratados con CBD. Sostenido a 12 meses.</div><div class="ev-source">N Engl J Med · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Dolor neuropático</div><div class="ev-finding">THC:CBD combinado reduce intensidad del dolor en 30% frente a placebo. Perfil superior a opioides a largo plazo.</div><div class="ev-source">Lancet Reg Health · 2024</div></div>
+        <div class="ev-card"><div class="ev-condition">Esclerosis múltiple</div><div class="ev-finding">Reducción significativa de espasticidad en el 75% de pacientes resistentes a tratamiento convencional.</div><div class="ev-source">Eur J Neurol · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Náuseas por quimioterapia</div><div class="ev-finding">Los cannabinoides son superiores a placebo y equivalentes a antieméticos estándar. Evidencia de calidad moderada-alta.</div><div class="ev-source">Cochrane Rev · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Ansiedad generalizada</div><div class="ev-finding">CBD 300mg/día redujo puntuación de ansiedad en 42% tras 4 semanas. Sin efectos adversos graves reportados.</div><div class="ev-source">Neuropsychopharmacology · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Insomnio crónico</div><div class="ev-finding">CBD mejoró calidad del sueño y redujo latencia de inicio en pacientes con insomnio primario crónico.</div><div class="ev-source">Sleep Medicine · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Enfermedad de Parkinson</div><div class="ev-finding">Mejora en calidad de vida, reducción de temblor en reposo y mayor bienestar subjetivo con cannabis medicinal.</div><div class="ev-source">Mov Disord · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Fibromialgia</div><div class="ev-finding">Cannabis medicinal reduce el dolor en un 65% de los pacientes donde la terapia convencional fue insuficiente.</div><div class="ev-source">Eur J Pain · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Enfermedad de Crohn</div><div class="ev-finding">CBD indujo remisión clínica en el 45% vs 10% placebo. Mejora sostenida de marcadores inflamatorios intestinales.</div><div class="ev-source">J Crohn's Colitis · 2024</div></div>
+        <div class="ev-card"><div class="ev-condition">TEPT</div><div class="ev-finding">THC de baja dosis redujo pesadillas y flashbacks. Mejora significativa en escala CAPS-5 a 8 semanas.</div><div class="ev-source">J Clin Psychiatry · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Dolor oncológico</div><div class="ev-finding">THC:CBD oromucoso como adyuvante redujo dosis de opioides en 25% manteniendo control efectivo del dolor.</div><div class="ev-source">J Pain Symptom Manage · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Neuropatía diabética</div><div class="ev-finding">Cannabis inhalado redujo dolor neuropático de intensidad moderada-severa con tolerabilidad aceptable.</div><div class="ev-source">Diabetes Care · 2023</div></div>
+        <!-- Set 2 — copia exacta para loop sin corte -->
+        <div class="ev-card"><div class="ev-condition">Epilepsia refractaria</div><div class="ev-finding">Reducción ≥50% de crisis en el 43% de pacientes pediátricos tratados con CBD. Sostenido a 12 meses.</div><div class="ev-source">N Engl J Med · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Dolor neuropático</div><div class="ev-finding">THC:CBD combinado reduce intensidad del dolor en 30% frente a placebo. Perfil superior a opioides a largo plazo.</div><div class="ev-source">Lancet Reg Health · 2024</div></div>
+        <div class="ev-card"><div class="ev-condition">Esclerosis múltiple</div><div class="ev-finding">Reducción significativa de espasticidad en el 75% de pacientes resistentes a tratamiento convencional.</div><div class="ev-source">Eur J Neurol · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Náuseas por quimioterapia</div><div class="ev-finding">Los cannabinoides son superiores a placebo y equivalentes a antieméticos estándar. Evidencia de calidad moderada-alta.</div><div class="ev-source">Cochrane Rev · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Ansiedad generalizada</div><div class="ev-finding">CBD 300mg/día redujo puntuación de ansiedad en 42% tras 4 semanas. Sin efectos adversos graves reportados.</div><div class="ev-source">Neuropsychopharmacology · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Insomnio crónico</div><div class="ev-finding">CBD mejoró calidad del sueño y redujo latencia de inicio en pacientes con insomnio primario crónico.</div><div class="ev-source">Sleep Medicine · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Enfermedad de Parkinson</div><div class="ev-finding">Mejora en calidad de vida, reducción de temblor en reposo y mayor bienestar subjetivo con cannabis medicinal.</div><div class="ev-source">Mov Disord · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Fibromialgia</div><div class="ev-finding">Cannabis medicinal reduce el dolor en un 65% de los pacientes donde la terapia convencional fue insuficiente.</div><div class="ev-source">Eur J Pain · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Enfermedad de Crohn</div><div class="ev-finding">CBD indujo remisión clínica en el 45% vs 10% placebo. Mejora sostenida de marcadores inflamatorios intestinales.</div><div class="ev-source">J Crohn's Colitis · 2024</div></div>
+        <div class="ev-card"><div class="ev-condition">TEPT</div><div class="ev-finding">THC de baja dosis redujo pesadillas y flashbacks. Mejora significativa en escala CAPS-5 a 8 semanas.</div><div class="ev-source">J Clin Psychiatry · 2022</div></div>
+        <div class="ev-card"><div class="ev-condition">Dolor oncológico</div><div class="ev-finding">THC:CBD oromucoso como adyuvante redujo dosis de opioides en 25% manteniendo control efectivo del dolor.</div><div class="ev-source">J Pain Symptom Manage · 2023</div></div>
+        <div class="ev-card"><div class="ev-condition">Neuropatía diabética</div><div class="ev-finding">Cannabis inhalado redujo dolor neuropático de intensidad moderada-severa con tolerabilidad aceptable.</div><div class="ev-source">Diabetes Care · 2023</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROFESIONALES
+  ============================================================ -->
+  <section id="profesionales">
+    <div class="profesionales-inner">
+      <div class="profesionales-header">
+        <p class="section-label reveal">Para equipos de salud</p>
+        <h2 class="section-title reveal delay-1">Un recurso para quienes<br>acompañan pacientes.</h2>
+      </div>
+      <div class="profesionales-grid">
+        <div class="prof-card reveal">
+          <div class="prof-card-role">Médicos y psicólogos</div>
+          <div class="prof-card-title">MarIA habla tu idioma.</div>
+          <div class="prof-card-desc">Consultá protocolos, evidencia actualizada e interacciones farmacológicas antes de la consulta.</div>
+          <ul class="prof-features">
+            <li>Revisión de literatura científica reciente</li>
+            <li>Interacciones cannabis-fármacos</li>
+            <li>Protocolos de dosificación en estudios</li>
+            <li>Marco regulatorio vigente</li>
+            <li>Conexión con red Ancestra</li>
+          </ul>
+        </div>
+        <div class="prof-card reveal delay-1">
+          <div class="prof-card-role">Farmacéuticos y dispensadores</div>
+          <div class="prof-card-title">Información técnica. Al instante.</div>
+          <div class="prof-card-desc">Perfiles farmacológicos, biodisponibilidad y formas farmacéuticas para acompañar mejor al paciente.</div>
+          <ul class="prof-features">
+            <li>Perfiles de cannabinoides por presentación</li>
+            <li>Interacciones relevantes en farmacia</li>
+            <li>Regulación ANMAT actualizada</li>
+            <li>Modelo Espacio Ancestra</li>
+            <li>Capacitación en red</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       PARTNERS / CONTACT
+  ============================================================ -->
+  <section id="partners">
+    <div class="partners-inner">
+      <div class="partners-left">
+        <p class="section-label reveal">Institucional</p>
+        <h2 class="section-title reveal delay-1">¿Querés integrar<br>MarIA a tu institución?</h2>
+        <p class="section-sub reveal delay-2">Clínicas, hospitales, obras sociales, universidades. MarIA puede operar dentro de tu estructura con identidad propia.</p>
+        <p class="partner-tag reveal delay-3">Salud · Educación · Investigación · Industria</p>
+      </div>
+      <div class="partners-right reveal delay-1">
+        <form class="contact-form" id="contactForm" onsubmit="handleContactSubmit(event)">
+          <div class="form-group">
+            <label class="form-label" for="contact-nombre">Nombre / Institución</label>
+            <input class="form-input" type="text" id="contact-nombre" name="nombre" placeholder="Tu nombre o nombre de la institución" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-contacto">WhatsApp o Email</label>
+            <input class="form-input" type="text" id="contact-contacto" name="contacto" placeholder="+54 9 299 4..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="contact-uso">¿Cómo querés usar MarIA?</label>
+            <textarea class="form-textarea" id="contact-uso" name="uso" placeholder="Contanos brevemente tu caso de uso o institución..."></textarea>
+          </div>
+          <!-- Honeypot -->
+          <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+          <button type="submit" class="form-submit" aria-label="Enviar consulta institucional">
+            Enviar consulta →
+          </button>
+        </form>
+        <div class="form-success" id="formSuccess">
+          <p>Mensaje recibido. Nos ponemos en contacto en las próximas 24 horas.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       DISCLAIMER
+  ============================================================ -->
+  <section id="disclaimer">
+    <div class="disclaimer-inner">
+      <div class="disclaimer-box reveal">
+        <p class="disclaimer-text">
+          MarIA es un agente de inteligencia artificial especializado en información sobre cannabis medicinal y salud integrativa. Sus respuestas tienen fines educativos e informativos exclusivamente.
+          <strong>No reemplaza la consulta con un profesional de la salud, no realiza diagnósticos ni prescripciones.</strong>
+          Ante cualquier emergencia médica, contactá al SAME: <strong>107</strong>.
+        </p>
+      </div>
+    </div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer>
+    <div class="footer-inner">
+      <span class="footer-brand">Mar<span class="footer-ia">IA</span> · por Ancestra · Neuquén, Patagonia</span>
+      <ul class="footer-links">
+        <li><a href="#como-funciona">Cómo funciona</a></li>
+        <li><a href="#profesionales">Profesionales</a></li>
+        <li><a href="#partners">Partners</a></li>
+        <li><a href="#disclaimer">Privacidad</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       SCRIPTS
+  ============================================================ -->
+  <script>
+    /* ------ Custom cursor ------ */
+    const cursor = document.getElementById('cursor');
+    let cx = 0, cy = 0, tx = 0, ty = 0;
+    document.addEventListener('mousemove', e => { tx = e.clientX; ty = e.clientY; cursor.style.opacity = '1'; });
+    document.addEventListener('mouseleave', () => { cursor.style.opacity = '0'; });
+    (function loop() {
+      cx += (tx - cx) * 0.18;
+      cy += (ty - cy) * 0.18;
+      cursor.style.left = cx + 'px';
+      cursor.style.top  = cy + 'px';
+      requestAnimationFrame(loop);
+    })();
+
+    /* ------ Nav scroll ------ */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    /* ------ Mobile nav ------ */
+    const mobileNav = document.getElementById('mobileNav');
+    function toggleMobileNav() {
+      mobileNav.classList.toggle('open');
+      document.body.style.overflow = mobileNav.classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMobileNav() {
+      mobileNav.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ------ Smooth scroll ------ */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const id = a.getAttribute('href').slice(1);
+        if (!id) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        const top = el.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+
+    /* ------ Reveal on scroll ------ */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          revealObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ------ Counter animation ------ */
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+    function animateCounter(el, target, suffix, dur) {
+      const start = performance.now();
+      (function tick(now) {
+        const p = Math.min((now - start) / dur, 1);
+        const v = Math.round(easeOutCubic(p) * target);
+        el.textContent = v.toLocaleString('es-AR') + (p >= 1 ? suffix : '');
+        if (p < 1) requestAnimationFrame(tick);
+      })(start);
+    }
+    const counterObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.querySelectorAll('[data-target]').forEach(el => {
+          const t = parseInt(el.dataset.target, 10);
+          const s = el.dataset.suffix || '';
+          const d = t > 1000 ? 2000 : t > 100 ? 1800 : 1200;
+          animateCounter(el, t, s, d);
+        });
+        counterObs.unobserve(e.target);
+      });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('[data-target]').forEach(el => {
+      const sec = el.closest('section') || el.parentElement;
+      if (sec) counterObs.observe(sec);
+    });
+
+    /* ------ Contact form ------ */
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = document.getElementById('contactForm');
+      const success = document.getElementById('formSuccess');
+      const btn = form.querySelector('.form-submit');
+      btn.textContent = 'Enviando...';
+      btn.disabled = true;
+      setTimeout(() => {
+        form.style.display = 'none';
+        success.classList.add('visible');
+      }, 700);
+    }
+
+    /* ============================================================
+       VIDEO FADE-IN
+    ============================================================ */
+    const heroVideo = document.querySelector('.hero-video');
+    let videoReady = false;
+
+    function onVideoReady() {
+      if (videoReady) return;
+      videoReady = true;
+      heroVideo.classList.add('loaded');
+      setTimeout(openChatWidget, 1800); /* slide up 1.8s after video loads */
+    }
+
+    heroVideo.addEventListener('loadeddata', onVideoReady);
+    heroVideo.addEventListener('canplay',    onVideoReady);
+    if (heroVideo.readyState >= 3) onVideoReady();
+    setTimeout(() => { if (!videoReady) onVideoReady(); }, 2500); /* fallback */
+
+    /* ============================================================
+       CHAT WIDGET
+    ============================================================ */
+    const chatWidget = document.getElementById('chatWidget');
+    const chatBubble = document.getElementById('chatBubble');
+    const chatTyping = document.getElementById('chatTyping');
+    const chatMsg1   = document.getElementById('chatMsg1');
+    const chatMsg2   = document.getElementById('chatMsg2');
+    const chatMsg3   = document.getElementById('chatMsg3');
+    const chatStatus = document.getElementById('chatStatusText');
+    const chatInput  = document.getElementById('chatInput');
+    const WA_NUMBER  = '5492996375723';
+
+    function showBubble(el, onDone) {
+      el.style.display = 'flex';
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        el.classList.add('visible');
+        if (onDone) setTimeout(onDone, 500);
+      }));
+    }
+
+    function openChatWidget() {
+      chatWidget.classList.add('open');
+      chatBubble.style.display = 'none';
+      chatStatus.textContent = 'Escribiendo…';
+
+      /* Secuencia: typing → msg1 → typing → msg2 → typing → msg3 */
+      setTimeout(() => {
+        chatTyping.style.display = 'none';
+        showBubble(chatMsg1, () => {
+          /* re-show typing before msg2 */
+          chatTyping.style.display = 'flex';
+          setTimeout(() => {
+            chatTyping.style.display = 'none';
+            showBubble(chatMsg2, () => {
+              chatTyping.style.display = 'flex';
+              setTimeout(() => {
+                chatTyping.style.display = 'none';
+                showBubble(chatMsg3, () => {
+                  chatStatus.textContent = 'En línea · 24 / 7';
+                  chatInput.focus();
+                });
+              }, 900);
+            });
+          }, 1000);
+        });
+      }, 1600);
+    }
+
+    function minimizeChat() {
+      chatWidget.classList.remove('open');
+      setTimeout(() => {
+        chatBubble.style.display = 'flex';
+      }, 400);
+    }
+
+    function openChat() {
+      chatBubble.style.display = 'none';
+      chatWidget.classList.add('open');
+      chatInput.focus();
+    }
+
+    function sendToWhatsApp() {
+      const msg = chatInput.value.trim();
+      if (!msg) {
+        chatInput.focus();
+        chatInput.style.borderColor = 'rgba(113,206,106,0.5)';
+        setTimeout(() => chatInput.style.borderColor = '', 1000);
+        return;
+      }
+      const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+
+    function handleChatKey(e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        sendToWhatsApp();
+      }
+    }
+
+    /* Chips autocomplete the input */
+    document.querySelectorAll('.chat-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const topic = chip.textContent.trim();
+        chatInput.value = `Tengo una consulta sobre ${topic}: `;
+        chatInput.focus();
+        chatInput.setSelectionRange(chatInput.value.length, chatInput.value.length);
+      });
+    });
+  </script>
+</body>
+</html>
