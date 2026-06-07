@@ -380,6 +380,24 @@
     }
     .chat-minimize:hover { color: var(--off-white); }
 
+    .chat-collapse-btn {
+      color: var(--gray);
+      padding: 6px;
+      border-radius: 4px;
+      transition: color 0.2s ease;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .chat-collapse-btn:hover { color: var(--off-white); }
+    .chat-collapse-btn svg { transition: transform 0.3s ease; }
+    .chat-widget.body-collapsed .chat-collapse-btn svg { transform: rotate(180deg); }
+
+    .chat-widget.body-collapsed .chat-messages,
+    .chat-widget.body-collapsed .chat-input-wrap,
+    .chat-widget.body-collapsed .chat-footer-note { display: none !important; }
+    .chat-widget.body-collapsed { border-radius: 10px; }
+
     /* Messages */
     .chat-messages {
       padding: 20px 16px 16px;
@@ -718,6 +736,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 1px;
       border: 0.5px solid var(--border);
+      align-items: stretch;
     }
 
     .knowledge-card {
@@ -726,6 +745,8 @@
       border: 0.5px solid transparent;
       transition: background 0.2s ease, border-color 0.2s ease;
       cursor: default;
+      display: flex;
+      flex-direction: column;
     }
     .knowledge-card:hover {
       background: var(--surface-2);
@@ -1507,7 +1528,7 @@
       .disclaimer-inner,
       .eco-hub-inner {
         padding-left: 300px !important;
-        padding-right: 508px !important;
+        padding-right: var(--chat-section-pr, 508px) !important;
         max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
@@ -1515,7 +1536,7 @@
 
       .footer-inner {
         padding-left: 300px !important;
-        padding-right: 508px !important;
+        padding-right: var(--chat-section-pr, 508px) !important;
         max-width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
@@ -1806,6 +1827,11 @@
         <div class="chat-name">Mar<span class="chat-name-ia">IA</span></div>
         <div class="chat-status-text" id="chatStatusText">Conectando…</div>
       </div>
+      <button class="chat-collapse-btn" onclick="toggleCollapseChat()" aria-label="Contraer chat">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+          <polyline points="4 10 8 6 12 10"/>
+        </svg>
+      </button>
       <button class="chat-minimize" onclick="minimizeChat()" aria-label="Minimizar chat">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
           <line x1="2" y1="8" x2="14" y2="8"/>
@@ -2136,7 +2162,7 @@
           </div>
           <div class="form-group">
             <label class="form-label" for="contact-contacto">WhatsApp o Email</label>
-            <input class="form-input" type="text" id="contact-contacto" name="contacto" placeholder="+54 9 299 4..." required>
+            <input class="form-input" type="text" id="contact-contacto" name="contacto" placeholder="WhatsApp o email de contacto" required>
           </div>
           <div class="form-group">
             <label class="form-label" for="contact-uso">¿Cómo querés usar MarIA?</label>
@@ -2162,8 +2188,8 @@
     <div class="disclaimer-inner">
       <div class="disclaimer-box reveal">
         <p class="disclaimer-text">
-          MarIA es un agente de inteligencia artificial especializado en información sobre cannabis medicinal y salud integrativa. Sus respuestas tienen fines educativos e informativos exclusivamente.
-          <strong>No reemplaza la consulta con un profesional de la salud, no realiza diagnósticos ni prescripciones.</strong>
+          MarIA es un agente de inteligencia artificial especializado en información sobre cannabis medicinal y salud integrativa. Sus respuestas tienen fines educativos e informativos.
+          <strong>Para diagnóstico, prescripción o atención clínica, consultá con un profesional de la salud.</strong>
           Ante cualquier emergencia médica, contactá al SAME: <strong>107</strong>.
         </p>
       </div>
@@ -2353,9 +2379,18 @@
 
     function minimizeChat() {
       chatWidget.classList.remove('open');
+      chatWidget.classList.remove('body-collapsed');
+      document.documentElement.style.setProperty('--chat-section-pr', '508px');
       setTimeout(() => {
         chatBubble.style.display = 'flex';
       }, 400);
+    }
+
+    function toggleCollapseChat() {
+      const collapsed = chatWidget.classList.toggle('body-collapsed');
+      document.documentElement.style.setProperty(
+        '--chat-section-pr', collapsed ? '120px' : '508px'
+      );
     }
 
     function openChat() {
