@@ -169,7 +169,10 @@ function loginHTML(error, blocked = false) {
     <p class="eyebrow">Acceso privado · Ancestra</p>
     <div class="brand">Preguntale a<b>Mar<span>IA</span></b></div>
     ${blocked ? `
-    <div class="err" style="opacity:1">Demasiados intentos. El acceso quedó bloqueado.</div>
+    <div class="err" style="opacity:1;margin-bottom:18px">Demasiados intentos. El acceso quedó bloqueado.</div>
+    <p style="font-size:.8rem;color:var(--gray);margin:0 0 12px">¿No tenés la clave? Pedila:</p>
+    <a href="https://calendar.app.google/PBcbPHeEvsxKNR4X8" target="_blank" rel="noopener" style="display:block;width:100%;padding:14px;border-radius:14px;border:1px solid rgba(113,206,106,.5);color:var(--green);text-decoration:none;font-weight:600;margin-bottom:10px">Solicitar acceso por Meet</a>
+    <a href="https://wa.me/5492994229436?text=${encodeURIComponent('Hola, quiero acceso a Preguntale a MarIA.')}" target="_blank" rel="noopener" style="display:block;width:100%;padding:14px;border-radius:14px;background:var(--green);color:var(--black);text-decoration:none;font-weight:700">Solicitar por WhatsApp</a>
     ` : `
     <form method="POST" autocomplete="off">
       <input type="password" name="password" placeholder="Contraseña de acceso" autofocus aria-label="Contraseña de acceso" />
