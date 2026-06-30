@@ -12,6 +12,8 @@ const COOKIE = 'maria_gate';
 const TOKEN = 'maria-acceso-ok-v1';
 const VISITOR_COOKIE = 'maria_vid';
 const SESSION_COOKIE = 'maria_sid';
+const FAILS_COOKIE = 'maria_fails';
+const MAX_FAILS = 3;                               // 3 intentos y se bloquea
 const MAX_AGE = 60 * 60 * 24 * 30;                 // 30 días
 
 export async function onRequest(context) {
@@ -20,10 +22,16 @@ export async function onRequest(context) {
   const cookies = parseCookies(request.headers.get('Cookie') || '');
   const visitorId = cookies[VISITOR_COOKIE] || `visitor-${crypto.randomUUID()}`;
   const sessionId = cookies[SESSION_COOKIE] || `session-${crypto.randomUUID()}`;
+  const fails = parseInt(cookies[FAILS_COOKIE] || '0', 10) || 0;
 
   // ¿ya tiene la cookie válida? → servir el sitio.
   if (cookies[COOKIE] === TOKEN) {
     return next();
+  }
+
+  // Bloqueo: tras MAX_FAILS intentos fallidos, no hay más chances.
+  if (fails >= MAX_FAILS) {
+    return loginResponse(false, visitorId, sessionId, fails);
   }
 
   // intento de login (POST del formulario)
@@ -40,18 +48,19 @@ export async function onRequest(context) {
     if (ok) {
       const headers = new Headers({ Location: '/' });
       headers.append('Set-Cookie', `${COOKIE}=${TOKEN}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE}`);
+      headers.append('Set-Cookie', `${FAILS_COOKIE}=0; Path=/; Max-Age=0`); // limpia el contador
       headers.append('Set-Cookie', `${VISITOR_COOKIE}=${visitorId}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE}`);
       headers.append('Set-Cookie', `${SESSION_COOKIE}=${sessionId}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 2}`);
       return new Response(null, { status: 302, headers });
     }
-    return loginResponse(true, visitorId, sessionId);
+    return loginResponse(true, visitorId, sessionId, fails + 1); // suma un fallo
   }
 
   // Cualquier otra cosa → pantalla de acceso. Registrar "view" solo en navegaciones HTML.
   if (isDocumentRequest(request, url)) {
     gateEvent(context, 'view', url.pathname, visitorId, sessionId);
   }
-  return loginResponse(false, visitorId, sessionId);
+  return loginResponse(false, visitorId, sessionId, fails);
 }
 
 // Valida la clave contra la consola central. true=ok, false=rechazada, null=central caído.
@@ -106,17 +115,19 @@ function isDocumentRequest(request, url) {
   return !ext || ext === 'html';
 }
 
-function loginResponse(error, visitorId, sessionId) {
+function loginResponse(error, visitorId, sessionId, fails = 0) {
+  const blocked = fails >= MAX_FAILS;
   const headers = new Headers({
     'Content-Type': 'text/html; charset=utf-8',
     'Cache-Control': 'no-store',
   });
   headers.append('Set-Cookie', `${VISITOR_COOKIE}=${visitorId}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE}`);
   headers.append('Set-Cookie', `${SESSION_COOKIE}=${sessionId}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${60 * 60 * 2}`);
-  return new Response(loginHTML(error), { status: 401, headers });
+  headers.append('Set-Cookie', `${FAILS_COOKIE}=${fails}; Path=/; SameSite=Lax; Max-Age=${MAX_AGE}`);
+  return new Response(loginHTML(error, blocked), { status: blocked ? 403 : 401, headers });
 }
 
-function loginHTML(error) {
+function loginHTML(error, blocked = false) {
   return `<!doctype html>
 <html lang="es-AR">
 <head>
@@ -157,11 +168,14 @@ function loginHTML(error) {
   <main class="card">
     <p class="eyebrow">Acceso privado · Ancestra</p>
     <div class="brand">Preguntale a<b>Mar<span>IA</span></b></div>
+    ${blocked ? `
+    <div class="err" style="opacity:1">Demasiados intentos. El acceso quedó bloqueado.</div>
+    ` : `
     <form method="POST" autocomplete="off">
       <input type="password" name="password" placeholder="Contraseña de acceso" autofocus aria-label="Contraseña de acceso" />
       <button type="submit">Ingresar</button>
       <div class="err">${error ? 'Contraseña incorrecta. Probá de nuevo.' : ''}</div>
-    </form>
+    </form>`}
     <p class="foot">acceso restringido</p>
   </main>
 </body>
