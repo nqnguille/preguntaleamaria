@@ -63,7 +63,7 @@ async function verifyCentral(context, key, path, visitorId, sessionId) {
         'Content-Type': 'application/json',
         'CF-IPCountry': context.request.headers.get('cf-ipcountry') || '',
       },
-      body: JSON.stringify({ project: PROJECT, gate: GATE, key, visitor_id: visitorId, session_id: sessionId, path }),
+      body: JSON.stringify({ project: PROJECT, gate: GATE, key, visitor_id: visitorId, session_id: sessionId, path, ua: context.request.headers.get('user-agent') || '' }),
     });
     if (!res.ok) return null;
     const data = await res.json().catch(() => null);
