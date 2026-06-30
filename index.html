@@ -1714,39 +1714,7 @@
 </head>
 <body>
 
-  <!-- ============================================================
-       ACCESS GATE
-  ============================================================ -->
-  <div id="access-gate" role="dialog" aria-modal="true" aria-label="Acceso privado">
-    <video class="gate-video-bg" autoplay muted loop playsinline>
-      <source src="hero_1.mp4" type="video/mp4">
-    </video>
-    <div class="gate-overlay"></div>
-    <div class="gate-panel">
-      <p class="gate-eyebrow">Acceso privado · Ancestra</p>
-      <p class="gate-title">Preguntale a</p>
-      <p class="gate-title-bold">Mar<span class="gate-ia">IA</span></p>
-      <form class="gate-form" onsubmit="checkGatePassword(event)">
-        <div class="gate-input-wrap">
-          <input
-            id="gate-input"
-            class="gate-input"
-            type="password"
-            placeholder="Contraseña de acceso"
-            autocomplete="current-password"
-            autofocus
-          >
-          <button type="button" class="gate-eye-btn" onclick="toggleGateEye(this)" aria-label="Mostrar contraseña">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-          </button>
-        </div>
-        <p class="gate-error-msg" id="gate-error" aria-live="polite"></p>
-        <button type="submit" class="gate-submit">Ingresar</button>
-      </form>
-    </div>
-  </div>
+  <!-- Acceso controlado server-side por functions/_middleware.js (consola gates-analytics) -->
 
   <!-- Custom cursor -->
   <div id="cursor" class="cursor" aria-hidden="true"></div>
@@ -2429,68 +2397,6 @@
     });
   </script>
 
-  <!-- ============================================================
-       ACCESS GATE SCRIPT
-  ============================================================ -->
-  <script>
-    (function () {
-      const GATE_KEY   = 'maria_access';
-      const GATE_PASS  = 'iloveyoumari';
-      const gate       = document.getElementById('access-gate');
-      const gateInput  = document.getElementById('gate-input');
-      const gateError  = document.getElementById('gate-error');
-      const gateVideo  = gate.querySelector('.gate-video-bg');
-
-      /* Fade in video background */
-      gateVideo.addEventListener('loadeddata', () => gateVideo.classList.add('loaded'));
-      if (gateVideo.readyState >= 3) gateVideo.classList.add('loaded');
-
-      function unlock() {
-        sessionStorage.setItem(GATE_KEY, '1');
-        gate.classList.add('unlocking');
-        setTimeout(() => {
-          gate.style.display = 'none';
-          document.body.style.overflow = '';
-          gateVideo.pause();
-          /* Trigger main site animations that were waiting */
-          document.dispatchEvent(new Event('gate:unlocked'));
-        }, 650);
-      }
-
-      /* Already authenticated this session */
-      if (sessionStorage.getItem(GATE_KEY) === '1') {
-        gate.style.display = 'none';
-        return;
-      }
-
-      /* Block scroll while gate is showing */
-      document.body.style.overflow = 'hidden';
-
-      window.checkGatePassword = function (e) {
-        e.preventDefault();
-        const val = gateInput.value.trim();
-        if (val === GATE_PASS) {
-          gateError.textContent = '';
-          gateInput.classList.remove('error');
-          unlock();
-        } else {
-          gateInput.classList.add('error');
-          gateError.textContent = 'Contraseña incorrecta.';
-          gateInput.value = '';
-          gateInput.focus();
-          setTimeout(() => gateInput.classList.remove('error'), 400);
-        }
-      };
-
-      window.toggleGateEye = function (btn) {
-        const type = gateInput.type === 'password' ? 'text' : 'password';
-        gateInput.type = type;
-        /* swap icon */
-        btn.innerHTML = type === 'text'
-          ? `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
-          : `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
-      };
-    })();
-  </script>
+  <!-- Gate movido a server-side: la validación ahora la hace functions/_middleware.js contra la consola gates-analytics. -->
 </body>
 </html>
